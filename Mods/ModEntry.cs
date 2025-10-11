@@ -127,6 +127,7 @@ public class ModEntry : Mod
 		helper.ConsoleCommands.Add("alos.server", "Toggles headless server on/off", ServerToggle);
 		helper.ConsoleCommands.Add("alos.debug_server", "Turns debug mode on/off, lets server run when no players are connected", DebugToggle);
 		helper.ConsoleCommands.Add("alos.go_to_sleep", "Toggles festivals on/off", this.HandleGoToBed);
+		helper.ConsoleCommands.Add("alos.pause", "Toggles festivals on/off", this.HandlePauseSingle);
 		helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
 		helper.Events.GameLoop.Saving += OnSaving;
 		helper.Events.GameLoop.OneSecondUpdateTicked += OnOneSecondUpdateTicked;
@@ -138,7 +139,14 @@ public class ModEntry : Mod
 		helper.Events.Specialized.UnvalidatedUpdateTicked += OnUnvalidatedUpdateTick;
 	}
 
-	private void OnMenuChanged(object sender, MenuChangedEventArgs e)
+    private void HandlePauseSingle(string arg1, string[] arg2)
+    {
+		this.clientPaused = !this.clientPaused;
+		Game1.netWorldState.Value.IsPaused = !this.clientPaused;
+		this.SendChatMessage("Game " + (this.clientPaused ? "开始" : "暂停"));
+    }
+
+    private void OnMenuChanged(object sender, MenuChangedEventArgs e)
 	{
 		if (e.NewMenu != null)
 		{
@@ -396,6 +404,9 @@ public class ModEntry : Mod
 			return;
 		}
 		this.NoClientsPause();
+
+		//旧的暂停指令，现在新版游戏原生支持暂停
+		/*
 		if (this.Config.clientsCanPause)
 		{
 			List<ChatMessage> messages = base.Helper.Reflection.GetField<List<ChatMessage>>(Game1.chatBox, "messages").GetValue();
@@ -418,6 +429,9 @@ public class ModEntry : Mod
 				}
 			}
 		}
+		*/
+
+
 		if (this.Config.copyInviteCodeToClipboard && Game1.options.enableServer && this.inviteCode != Game1.server.getInviteCode())
 		{
 			DesktopClipboard.SetText("Invite Code: " + Game1.server.getInviteCode());
