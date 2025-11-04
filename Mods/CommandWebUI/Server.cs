@@ -33,11 +33,11 @@ namespace CommandWebUI
             var _uri = $"http://+:{Port}";
             listener.Prefixes.Add($"{_uri}/");
 
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Mods", "CommandWebUI", "index.html");
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Mods", "CommandWebUI", config.IndexPage);
             IndexPage = File.ReadAllText(path);
             IndexPage = IndexPage.Replace("{{WEBSOCKET_URL}}", "/ws");
 
-            var _loginPagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Mods", "CommandWebUI", "Login.html");
+            var _loginPagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Mods", "CommandWebUI", config.LoginPage);
             LoginPage = File.ReadAllText(_loginPagePath);
 
             if (IndexPage == null)
